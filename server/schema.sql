@@ -1,13 +1,16 @@
-DROP TABLE IF EXISTS Review;
+CREATE SCHEMA IF NOT EXISTS reviewsSchema;
+
+DROP TABLE IF EXISTS review;
 DROP TABLE IF EXISTS characteristics;
 DROP TABLE IF EXISTS characteristic_reviews;
 DROP TABLE IF EXISTS photos;
 
-CREATE TABLE Review (
-  id SERIAL PRIMARY KEY,
-  product_id INTEGER UNIQUE NULL DEFAULT NULL,
+
+CREATE TABLE review (
+  id SERIAL UNIQUE PRIMARY KEY,
+  product_id INTEGER NULL DEFAULT NULL,
   rating BIGINT NULL DEFAULT NULL,
-  date TIMESTAMP NULL DEFAULT NULL,
+  date BIGINT NULL DEFAULT NULL,
   summary TEXT NULL DEFAULT NULL,
   body TEXT NULL DEFAULT NULL,
   recommend BOOL NULL DEFAULT NULL,
@@ -17,6 +20,7 @@ CREATE TABLE Review (
   response TEXT NULL DEFAULT NULL,
   helpfulness INTEGER NULL DEFAULT NULL
 );
+
 
 
 CREATE TABLE characteristics (
@@ -46,19 +50,6 @@ CREATE TABLE photos (
 );
 
 ALTER TABLE photos ADD FOREIGN KEY (review_id) REFERENCES review(id);
--- ---
--- Table Properties
--- ---
-
--- ALTER TABLE `Product` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
--- ALTER TABLE `Meta Data` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
--- ALTER TABLE `Review` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
--- ALTER TABLE `Reviewer (Post Review)` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
--- ALTER TABLE `Characteristics` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
--- ---
--- Test Data
--- ---
 
 -- INSERT INTO `Product` (`id`) VALUES
 -- ('');

@@ -1,0 +1,24 @@
+{
+  "name": "reviews-service",
+  "version": "1.0.0",
+  "description": "This is a server for FEC",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "server": "nodemon server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SDC-Team-Frodo/reviews-service.git"
+  },
+  "author": "Devin Hight",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SDC-Team-Frodo/reviews-service/issues"
+  },
+  "homepage": "https://github.com/SDC-Team-Frodo/reviews-service#readme",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "nodemon": "^2.0.7"
+  }
+}
