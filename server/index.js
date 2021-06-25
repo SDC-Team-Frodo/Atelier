@@ -13,10 +13,10 @@ connectDB.sequelize.authenticate()
   .then(() => console.log('Connection to DB Successful'))
   .catch((error) => console.log('Unable to connect to DB', error));
 
-app.get('/', (req, res) => {
-  connectDB.sequelize.query('select * from review Limit 10')
-    .then((data) => console.log(data[0]))
-     .catch((error) => console.log('CAUGHT ERROR', error));
+app.get('/reviews', (req, res) => {
+  connectDB.sequelize.query('select * from review')
+    .then((data) => res.send(data))
+    .catch((error) => console.log('CAUGHT ERROR', error));
   // console.log('CONNECTION LOG', connectDB.sequelize.query);
 });
 
