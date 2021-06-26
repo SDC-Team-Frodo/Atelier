@@ -1,3 +1,5 @@
+/* eslint-disable implicit-arrow-linebreak */
+/* eslint-disable prefer-destructuring */
 /* eslint-disable camelcase */
 /* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
@@ -22,6 +24,33 @@ app.get('/reviews', (req, res) => {
   connectDB.sequelize.query(`select * from review where product_id = ${product_id}`)
     .then((data) => res.send(data[0]))
     .catch((error) => console.log('CAUGHT ERROR', error));
+});
+
+app.get('/reviews/meta', (req, res) => {
+  const { product_id } = req.query;
+  const metaObj = {};
+  connectDB.sequelize.query(`SELECT rating, count(rating) from review where product_id = ${product_id} group by rating; `)
+    .then((ratingsCount) => connectDB.sequelize.query(`SELECT recommend, count(recommend) from review where product_id = ${product_id} group by recommend`)
+      .then((recommendedCount) =>
+        connectDB.sequelize.query(`select characteristics.id, name, AVG(value) FROM characteristics INNER JOIN characteristic_reviews
+        ON characteristics.id = characteristic_reviews.characteristic_id
+        where characteristics.product_id = ${product_id} group by characteristics.id;`)
+          .then((characteristicAvg) => {
+            metaObj.product_id = product_id;
+            metaObj.ratings = {};
+            // iterate through rating Object
+            ratingsCount[0].forEach((currentRating) => {
+              metaObj.ratings[currentRating.rating] = Number(currentRating.count);
+            });
+            // call object entries on each object
+            // transform data representation in ratings
+            // set that in meta obj
+            metaObj.recommended = recommendedCount[0];
+            metaObj.characteristics = characteristicAvg[0];
+            res.status(200).send(metaObj);
+          })
+          .catch((err) => { res.status(500); console.log(err); })))
+    .catch((err) => { res.status(500); console.log(err); });
 });
 
 // ====================POST REQUEST============================
@@ -52,8 +81,22 @@ app.post('/reviews', (req, res) => {
 
 // ===================PUT REQUEST==============================
 app.put('/reviews/:review_id/helpful', (req, res) => {
-
+  console.log(req.body, req.query, req.params);
+  const { review_id } = req.params;
+  connectDB.sequelize.query(`UPDATE review SET helpfulness = helpfulness + 1 WHERE id = ${review_id}`)
+    .then(() => res.status(200).send())
+    .catch((err) => console.log(err));
 });
+
+app.put('/reviews/:review_id/report', (req, res) => {
+  console.log(req.body, req.query, req.params);
+  const { review_id } = req.params;
+  connectDB.sequelize.query(`UPDATE review SET reported = true WHERE id = ${review_id}`)
+    .then(() => res.status(200).send())
+    .catch((err) => { res.status(500); console.log(err); });
+});
+
+// ==================LISTENING=================================
 
 const port = 3000;
 app.listen(port, () => {
