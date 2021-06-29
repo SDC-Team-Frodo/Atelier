@@ -6,50 +6,91 @@ DROP TABLE IF EXISTS characteristic_reviews;
 DROP TABLE IF EXISTS photos;
 
 
-CREATE TABLE review (
-  id SERIAL UNIQUE PRIMARY KEY,
-  product_id INTEGER NULL DEFAULT NULL,
-  rating BIGINT NULL DEFAULT NULL,
-  date BIGINT NULL DEFAULT NULL,
-  summary TEXT NULL DEFAULT NULL,
-  body TEXT NULL DEFAULT NULL,
-  recommend BOOL NULL DEFAULT NULL,
-  reported BOOL NULL DEFAULT NULL,
-  reviewer_name TEXT NULL DEFAULT NULL,
-  reviewer_email TEXT NULL DEFAULT NULL,
-  response TEXT NULL DEFAULT NULL,
-  helpfulness INTEGER NULL DEFAULT NULL
-);
+CREATE TABLE IF NOT EXISTS public.review
+(
+    id integer NOT NULL DEFAULT nextval('review_id_seq'::regclass),
+    product_id integer,
+    rating bigint,
+    date bigint,
+    summary text COLLATE pg_catalog."default",
+    body text COLLATE pg_catalog."default",
+    recommend boolean,
+    reported boolean,
+    reviewer_name text COLLATE pg_catalog."default",
+    reviewer_email text COLLATE pg_catalog."default",
+    response text COLLATE pg_catalog."default",
+    helpfulness integer,
+    CONSTRAINT review_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.review
+    OWNER to devin;
+-- Index: product_id
+
+-- DROP INDEX public.product_id;
+
+CREATE INDEX product_id
+    ON public.review USING hash
+    (product_id)
+    TABLESPACE pg_default;
 
 
 
-CREATE TABLE characteristics (
-  id SERIAL PRIMARY KEY,
-  product_id INTEGER NULL DEFAULT NULL,
-  name TEXT NULL DEFAULT NULL
-);
+CREATE TABLE IF NOT EXISTS public.characteristics
+(
+    id integer NOT NULL DEFAULT nextval('characteristics_id_seq'::regclass),
+    product_id integer,
+    name text COLLATE pg_catalog."default",
+    CONSTRAINT characteristics_pkey PRIMARY KEY (id)
+)
 
-ALTER TABLE characteristics ADD FOREIGN KEY (product_id) REFERENCES review (product_id);
+TABLESPACE pg_default;
+
+ALTER TABLE public.characteristics
+    OWNER to devin;
+-- Index: characteristics_id
+
+-- DROP INDEX public.characteristics_id;
+
+CREATE INDEX characteristics_id
+    ON public.characteristics USING hash
+    (id)
+    TABLESPACE pg_default;
 
 
-CREATE TABLE characteristic_reviews (
-  id SERIAL PRIMARY KEY,
-  characteristic_id INTEGER NULL DEFAULT NULL,
-  review_id INTEGER NULL DEFAULT NULL,
-  value INTEGER NULL DEFAULT NULL
-);
+CREATE TABLE IF NOT EXISTS public.characteristic_reviews
+(
+    id integer NOT NULL DEFAULT nextval('characteristic_reviews_id_seq'::regclass),
+    characteristic_id integer,
+    review_id integer,
+    value integer,
+    CONSTRAINT characteristic_reviews_pkey PRIMARY KEY (id),
+    CONSTRAINT characteristic_reviews_characteristic_id_fkey FOREIGN KEY (characteristic_id)
+        REFERENCES public.characteristics (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
 
-ALTER TABLE characteristic_reviews ADD FOREIGN KEY (characteristic_id) REFERENCES characteristics(id);
-ALTER TABLE characteristic_reviews ADD FOREIGN KEY (review_id) REFERENCES review(id);
+TABLESPACE pg_default;
+
+ALTER TABLE public.characteristic_reviews
+    OWNER to devin;
 
 
-CREATE TABLE photos (
-	id SERIAL PRIMARY KEY,
-	review_id INTEGER NULL DEFAULT NULL,
-	url TEXT NULL DEFAULT NULL
-);
+CREATE TABLE IF NOT EXISTS public.photos
+(
+    id integer NOT NULL DEFAULT nextval('photos_id_seq'::regclass),
+    review_id integer,
+    url text COLLATE pg_catalog."default",
+    CONSTRAINT photos_pkey PRIMARY KEY (id)
+)
 
-ALTER TABLE photos ADD FOREIGN KEY (review_id) REFERENCES review(id);
+TABLESPACE pg_default;
+
+ALTER TABLE public.photos
+    OWNER to devin;
 
 -- INSERT INTO `Product` (`id`) VALUES
 -- ('');
