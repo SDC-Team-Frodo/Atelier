@@ -10,3 +10,5 @@ const sequelize = new Sequelize('reviews', 'postgres', 'bored1176carpet', {
 module.exports = {
   sequelize,
 };
+
+//reviewTest, devin, process.env.DB_PASSWORD

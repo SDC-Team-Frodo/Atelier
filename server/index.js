@@ -19,6 +19,10 @@ connectDB.sequelize.authenticate()
 
 // ====================GET REQUEST=============================
 
+app.get('/loaderio-b7c005701bb34cf43047068802f733bd', (req, res) => {
+  res.status(200).end('loaderio-b7c005701bb34cf43047068802f733bd');
+});
+
 app.get('/reviews', (req, res) => {
   const { product_id } = req.query;
   connectDB.sequelize.query(`select * from review where product_id = ${product_id}`)
